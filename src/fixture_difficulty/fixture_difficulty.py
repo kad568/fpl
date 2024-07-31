@@ -33,11 +33,17 @@ def fpl_team_defensive_rating():
     
     for col in colomns_to_normalize:
         col_data = team_data[col]
-        col_data_normalised = ( col_data - col_data.min() ) / ( col_data.max() - col_data.min() )
+        col_data_normalised = ( col_data - 1040 ) / ( 1370 - 1040 )
         team_data[col] = col_data_normalised
-    
+
+    # sort by average rnk
+    row_avg = team_data[['strength_overall_home', 'strength_overall_away']].mean(axis=1)
+    row_order = row_avg.sort_values(ascending=False).index
+    team_data = team_data.loc[row_order]
     team_data.set_index("name", inplace=True)
 
+
+    # plot data
     sns.heatmap(team_data[['strength_overall_home', 'strength_overall_away',
        'strength_attack_home', 'strength_attack_away', 'strength_defence_home',
        'strength_defence_away']], annot=True)
